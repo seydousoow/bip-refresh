@@ -32,7 +32,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/bip-front",
+            "outputPath": "dist/bip-refresh",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
