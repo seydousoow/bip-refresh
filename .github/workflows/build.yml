@@ -30,10 +30,10 @@ jobs:
         cache-dependency-path: package-lock.json
     - run: npm ci
     - run: npm run build
-    - run: mv -r ${{ github.workspace }}/dist/bip-refresh/browser ${{ github.workspace }}/dist/bip-refresh
+    - run: mv ${{ github.workspace }}/dist/browser ${{ github.workspace }}/dist
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: dist/bip-refresh # The folder the action should deploy.
+        folder: dist # The folder the action should deploy.
 
