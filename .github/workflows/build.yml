@@ -9,11 +9,12 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: write # Allow write permission to GITHUB_TOKEN to commit to deploy branch.
 jobs:
   build:
-
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [20]
@@ -30,17 +31,8 @@ jobs:
     - run: npm ci
     - run: npm run build
 
-
-    - uses: actions/checkout@v4
-    - name: deploy
-      uses: AhsanAyaz/angular-deploy-gh-pages-actions@1.4.0 ## replace by latest version without it you will see Expected format {org}/{repo}[/path]@ref. Actual 'AhsanAyaz/angular-deploy-gh-pages-actions',Input string was not in a correct format.
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
-        github_access_token: ${{ secrets.GITHUB_TOKEN }} # see the Configuration section for how you can create secrets
-        build_configuration: staging # The build environment for the app. please look configurations in your angular.json
-        base_href: /bip-refresh/   # make sure this corresponds to https://<your_username>.github.io/<base_href>/
-        deploy_branch: gh-pages # The branch the action should deploy to.
-        angular_dist_build_folder: dist/bip-refresh # The folder where your project is supposed to be after running ng build by the action.
-
-permissions:
-  contents: write # Allow write permission to GITHUB_TOKEN to commit to deploy branch.
+        folder: build # The folder the action should deploy.
 
