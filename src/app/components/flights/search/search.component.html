@@ -1,0 +1,139 @@
+<!--suppress XmlInvalidId -->
+
+<div class="tw-grid tw-grid-cols-1">
+  <div class="tw-grid tw-grid-cols-1 tw-mb-1 md:tw-grid-cols-2 md:tw-gap-x-4">
+    <p-selectbutton [(ngModel)]="searchModel.oneWay" [options]="stateOptions" aria-labelledby="basic" optionLabel="label" optionValue="value" size="small"/>
+    <label class="tw-flex tw-items-center tw-space-x-2">
+      <input [(ngModel)]="searchModel.nonStop" class="tw-rounded tw-border-gray-300 tw-text-blue-600 focus:tw-ring-blue-500" type="checkbox">
+      <span class="tw-text-sm tw-font-medium">Vols directs uniquement</span>
+    </label>
+  </div>
+
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-6 tw-relative md:tw-grid-cols-2 md:tw-gap-x-4">
+    <!-- Origin & Destination -->
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <svg fill="#000000" height="24px" viewBox="0 0 480 480" width="24px" xmlns="http://www.w3.org/2000/svg">
+          <path
+              d="M468.829,89.302c-33.408-19.471-71.368-9.128-97.325,2.976l-77.378,36.082l-133.08-66.934l-79.253,3.405l109.893,111.408 l-70.035,33.269l-72.865-27.731L0,204.525l44.089,54.749c-4.658,5.557-8.879,13.381-5.047,21.599 c5.005,10.732,19.798,16.141,44.063,16.14c4.976,0,10.351-0.227,16.12-0.683c26.636-2.104,55.514-8.903,73.571-17.323 l276.596-128.979c23.89-11.141,35.79-22.839,36.38-35.765C486.078,107.559,483.387,97.784,468.829,89.302z M440.938,131.901 L164.343,260.881c-15.384,7.174-40.641,13.185-64.345,15.313c-24.228,2.175-37.182-0.556-41.5-2.875 c0.889-1.217,2.549-3.129,5.612-5.825l7.184-6.323l-39.708-49.308l17.986-8.388l72.943,27.763l103.169-49.009l-98-99.352 l29.021-1.247l137.089,68.949l86.16-40.176c31.467-14.673,57.979-15.957,78.803-3.823l0.001,0.001 c5.247,3.057,7.081,5.724,7.033,6.77C465.789,113.423,465.188,120.595,440.938,131.901z">
+          </path>
+        </svg>
+      </p-inputgroup-addon>
+      <input (focus)="fuseSearch(true)" (ngModelChange)="fuseKeySearchDepart = $event" [ngModel]="fuseKeySearchDepart"
+             autocomplete="off" class="tw-text-sm" pInputText placeholder="Départ"/>
+    </p-inputgroup>
+
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <svg fill="#000000" height="24px" viewBox="0 0 460 460" width="24px" xmlns="http://www.w3.org/2000/svg">
+          <path
+              d="M456.294,308.726L456.294,308.726c-6.49-37.701-38.456-59.887-64.129-71.858l-76.396-35.623L281.919,58.042L228.807,0 l-14.54,154.024l-69.455-31.787l-25.286-72.758L71.142,26.918L57.696,95.109c-7.177,0.02-15.767,1.824-19.563,9.966 c-5.981,12.829,2.949,31.502,26.545,55.501c18.517,18.832,42.016,36.38,59.868,44.705l273.273,127.43 c13.83,6.448,25.197,9.663,34.293,9.663c6.456,0,11.77-1.621,16.002-4.855C453.41,333.472,459.129,325.191,456.294,308.726z M435.972,321.627c-0.056,0.041-5.811,4.097-29.699-7.043l-273.274-127.43c-15.152-7.065-35.693-22.319-52.33-38.861 c-16.913-16.817-23.135-28.325-24.204-33.127c1.491-0.085,3.95-0.029,7.806,0.557l9.462,1.438l12.094-61.329l17.585,8.2 l25.313,72.838l102.811,47.051l12.948-137.164l19.169,20.949l34.884,147.569l85.177,39.719 c31.051,14.479,48.839,33.698,52.871,57.125v0.001C437.593,317.98,436.771,321.017,435.972,321.627z">
+          </path>
+        </svg>
+      </p-inputgroup-addon>
+      <input (focus)="fuseSearch(false)" (ngModelChange)="fuseKeySearchReturn = $event" [ngModel]="fuseKeySearchReturn"
+             autocomplete="off" class="tw-text-sm" pInputText placeholder="Destination"/>
+    </p-inputgroup>
+
+    <!-- Airport Suggestions -->
+    <div #fuse__block (outsideClick)="fuse__block.style.display = 'none'"
+         [class.md:tw-right-0]="activeSearch() === 'return'"
+         class="tw-absolute tw-w-80 tw-top-11 tw-bg-white tw-rounded-lg tw-shadow-xl tw-z-50 tw-max-h-64 tw-overflow-y-auto">
+      @for (item of filteredResults(); track item.iata) {
+        <div (click)="updateSelection(item)"
+             class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer tw-text-gray-950 tw-text-xs tw-p-2 hover:tw-bg-orange-100">
+          <div class="tw-mr-2 tw-w-11 tw-h-6 tw-flex tw-justify-center tw-items-center tw-text-white tw-bg-orange-500 tw-rounded tw-font-bold">
+            {{ item.iata }}
+          </div>
+          <div class="tw-flex-1">
+            <div>{{ item.airportName }}</div>
+            <div>{{ item.city }}, {{ item.countryName }}</div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Dates -->
+    <p-floatlabel variant="on">
+      <p-datepicker (onSelect)="onDepartureDateChange($event)" [(ngModel)]="searchModel.departureDate" [maxDate]="maxDate" [minDate]="minDate"
+                    [readonlyInput]="true" dateFormat="dd MM yy" id="flight__departure__date" inputId="flight__departure__date" styleClass="tw-w-full"/>
+      <label for="flight__departure__date">Date de départ</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <p-datepicker [(ngModel)]="searchModel.returnDate" [disabled]="searchModel.oneWay" [minDate]="returnMinDate()" [readonlyInput]="true"
+                    dateFormat="dd MM yy" id="flight__return__date" inputId="flight__return__date" readonlyInput styleClass="tw-w-full"/>
+      <label for="flight__return__date">Date de retour</label>
+    </p-floatlabel>
+
+  </div>
+
+  <!-- Passengers  -->
+  <div class="tw-grid tw-grid-cols-1 tw-gap-6 tw-text-white tw-rounded-lg tw-p-1.5 md:tw-grid-cols-2">
+    <!-- Passengers -->
+    <div class="tw-space-y-1 md:tw-px-2">
+      <div class="tw-flex tw-justify-between tw-items-center">
+        <span class="tw-text-sm tw-font-medium tw-select-none">Adulte (12+)</span>
+        <div class="tw-flex tw-flex-nowrap tw-items-center tw-justify-between tw-w-20">
+          <p-badge (click)="decreasePassengerCount('adults')" [class.disabled]="blockDecreaseAdultPassenger" value="-"/>
+          <span class="tw-text-white tw-text-lg tw-font-bold tw-select-none">{{ searchModel.adults }}</span>
+          <p-badge (click)="increasePassengerCount('adults')"
+                   [class.disabled]="searchModel.adults === 9 || searchModel.adults + searchModel.children + searchModel.infants === 9"
+                   value="+"/>
+        </div>
+      </div>
+
+      <div class="tw-flex tw-justify-between tw-items-center">
+        <span class="tw-text-sm tw-font-medium tw-select-none">Enfant (2-11)</span>
+        <div class="tw-flex tw-flex-nowrap tw-items-center tw-justify-between tw-w-20">
+          <p-badge (click)="decreasePassengerCount('children')" [class.disabled]="searchModel.children === 0" value="-"/>
+          <span class="tw-text-white tw-text-lg tw-font-bold tw-select-none">{{ searchModel.children }}</span>
+          <p-badge (click)="increasePassengerCount('children')"
+                   [class.disabled]="!blockIncreaseNonAdultPassenger || searchModel.children + searchModel.infants + searchModel.adults === 9"
+                   value="+"/>
+        </div>
+      </div>
+
+      <div class="tw-flex tw-justify-between tw-items-center">
+        <span class="tw-text-sm tw-font-medium tw-select-none">Bébé (0-2)</span>
+        <div class="tw-flex tw-flex-nowrap tw-items-center tw-justify-between tw-w-20">
+          <p-badge (click)="decreasePassengerCount('infants')" [class.disabled]="searchModel.infants === 0" value="-"/>
+          <span class="tw-text-white tw-text-lg tw-font-bold tw-select-none">{{ searchModel.infants }}</span>
+          <p-badge (click)="increasePassengerCount('infants')"
+                   [class.disabled]="!blockIncreaseNonAdultPassenger || searchModel.infants + searchModel.children + searchModel.adults === 9"
+                   value="+"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class & Options -->
+    <div class="tw-flex tw-flex-row tw-justify-between tw-items-center">
+      <div class="tw-relative">
+        <button (click)="classSelection = !classSelection"
+                class="tw-flex tw-flex-nowrap tw-justify-between tw-items-center tw-gap-x-2 tw-w-fit tw-float-right">
+          <span class="tw-text-base tw-font-bold tw-underline">{{ selectedTravelClass }}</span>
+          <i [class.tw-rotate-180]="classSelection" class="pi pi-chevron-down tw-text-xs tw-transition-transform tw-duration-200"></i>
+        </button>
+
+        <!-- Dropdown Menu -->
+        @if (classSelection) {
+          <div (outsideClick)="classSelection = false"
+               class="tw-absolute tw-right-50 tw-z-20 tw-top-6 tw-w-32 tw-origin-bottom tw-bg-white tw-shadow-lg">
+            <div role="menu" aria-orientation="vertical">
+              @for (item of travelClasses; track item.value; let last = $last) {
+                <button [id]="item.value" (click)="searchModel.travelClass = item.value; classSelection = false"
+                        class="tw-w-full tw-text-sm tw-font-bold tw-px-auto tw-py-2 tw-text-orange-600 hover:tw-bg-orange-100"
+                        role="menuitem">
+                  {{ item.label }}
+                </button>
+                <div [class.tw-hidden]="last" class="tw-border-t-[.3px] tw-border-orange-600"></div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <p-button (click)="searchFlight()" icon="pi pi-search" iconPos="left" label="Rechercher" severity="danger"/>
+    </div>
+  </div>
+</div>

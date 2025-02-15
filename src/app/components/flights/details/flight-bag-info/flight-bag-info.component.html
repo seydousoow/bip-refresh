@@ -1,0 +1,85 @@
+<p class="tw-w-full tw-text-xl tw-font-bold tw-text-neutral-900">Bagages en soute</p>
+<p-tabs (valueChange)="onTabChange($event.toString())" [value]="currentTab()" scrollable>
+  <p-tablist>
+    @for (traveler of travelers; track traveler.id) {
+      <p-tab [value]="traveler.id">
+        <p class="tw-w-full tw-text-center">Voyageur {{ traveler.id }} ({{ traveler.label }})</p>
+      </p-tab>
+    }
+  </p-tablist>
+
+  <p-tabpanels class="tw-px-0">
+    @for (traveler of travelers; track traveler.id) {
+      <p-tabpanel [value]="traveler.id">
+        @for (offer of flightOffers(); track offer) {
+          <div class="tw-w-full tw-flex tw-flex-nowrap tw-justify-between tw-items-center tw-relative">
+            <hr class="tw-hr tw-border-orange-400 tw-absolute -tw-translate-y-1/2 tw-w-full"/>
+            <div class="tw-w-full tw-flex tw-flex-nowrap tw-justify-start tw-items-center">
+              <div class="tw-w-fit tw-flex tw-flex-col tw-justify-start tw-items-center tw-text-sm tw-font-bold tw-text-neutral-800 tw-space-y-2">
+                @for (itinerary of offer.itineraries; track itinerary) {
+                  <p class="tw-w-full">{{ getCityName(itinerary.segments[0].departure.iataCode) }}</p>
+                }
+              </div>
+              <div class="tw-w-fit tw-flex tw-flex-col tw-justify-start tw-items-center tw-px-3 tw-text-sm tw-font-bold tw-text-neutral-800 tw-space-y-2">
+                @for (itinerary of offer.itineraries; track itinerary) {
+                  <p>→</p>
+                }
+              </div>
+              <div class="tw-w-fit tw-flex tw-flex-col tw-justify-start tw-items-center tw-text-sm tw-font-bold tw-text-neutral-800 tw-space-y-2">
+                @for (itinerary of offer.itineraries; track itinerary) {
+                  <p class="tw-w-full">{{ getCityName(itinerary.segments[itinerary.segments.length - 1].arrival.iataCode) }}</p>
+                }
+              </div>
+            </div>
+
+            <div class="tw-w-max tw-flex tw-flex-col tw-justify-end tw-items-center tw-text-sm tw-font-bold tw-text-neutral-800 tw-space-y-2 tw-text-right tw-pr-2">
+              @for (itinerary of offer.itineraries; track itinerary) {
+                <p class="tw-text-nowrap">{{ getIncludedBagsForItinerary(traveler.id, offer.travelerPricings, itinerary.segments) }}</p>
+              }
+            </div>
+          </div>
+
+          @if (canAddAdditionalBags(traveler.id, offer)) {
+            <p class="tw-w-full tw-pt-3 tw-pb-2 tw-mb-2 tw-text-lg tw-text-center tw-italic tw-underline tw-font-bold tw-border-b tw-border-orange-400">Ajouter des
+              bagages</p>
+
+            @for (itinerary of offer.itineraries; track itinerary) {
+              @if (canAddBags(traveler.id, itinerary)) {
+                <p-card styleClass="tw-w-full tw-p-0">
+                  <ng-template #header>
+                    <p class="tw-text-center tw-text-lg tw-font-bold tw-text-orange-700 tw-text-nowrap tw-space-x-2">
+                      <span>{{ getCityName(itinerary.segments[0].departure.iataCode) }}</span>
+                      <span>→</span>
+                      <span>{{ getCityName(itinerary.segments[itinerary.segments.length - 1].arrival.iataCode) }}</span>
+                    </p>
+                  </ng-template>
+                  <div class="tw-flex tw-justify-evenly tw-select-none">
+                    @for (bag of getAdditionalBagsForItinerary(traveler.id, itinerary.segments); track bag.identity) {
+                      <div class="tw-min-w-40 tw-border tw-rounded-lg tw-border-gray-500 tw-relative tw-shadow-2xl">
+                        <p class="tw-full tw-text-center tw-text-sm">
+                          @if (!bag.quantity) {
+                            Sans Baggage
+                          } @else {
+                            {{ bag.quantity }} pièce{{ bag.quantity > 1 ? 's' : '' }}
+                          }
+                        </p>
+                        <p class="tw-full tw-text-center tw-font-bold tw-text-orange-700">{{ bag.price.amount | currency : bag.price.currencyCode }}</p>
+
+                        <hr class="tw-w-full tw-hr tw-border-neutral-400 tw-py-0 tw-mb-0"/>
+                        <div (click)="selectBag(bag)" [class.!tw-bg-orange-500]="isSelected(bag)" [class.tw-font-bold]="isSelected(bag)"
+                             class="tw-text-center tw-cursor-pointer tw-py-2 tw-bg-orange-200 tw-rounded-b-lg hover:tw-bg-orange-500 hover:tw-font-bold">Sélectionner
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </p-card>
+
+              }
+            }
+          }
+        }
+      </p-tabpanel>
+    }
+  </p-tabpanels>
+</p-tabs>
+

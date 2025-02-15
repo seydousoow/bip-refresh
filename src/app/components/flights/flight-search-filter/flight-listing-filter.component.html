@@ -1,0 +1,65 @@
+<div [formGroup]="filterFormGroup()" class="tw-grid tw-grid-cols-1 tw-gap-y-3 md:tw-w-52 lg:tw-w-72">
+  <!-- Price Range -->
+  <p-panel toggleable>
+    <ng-template #header>
+      <div class="tw-flex tw-items-center tw-gap-2">
+        <div
+            class="tw-bg-blue-400 tw-text-white tw-rounded-full tw-flex tw-justify-center tw-items-center tw-w-5 tw-h-5">
+          <i class="pi pi-dollar tw-text-xs"></i>
+        </div>
+        <span class="tw-font-bold tw-text-xs">Prix</span>
+      </div>
+    </ng-template>
+    <p-slider [max]="maxRangePrice()" [step]="50000" formControlName="maxPrice" min="0"/>
+    <p class="tw-pt-2 tw-text-xs tw-font-medium">Max: {{ filterFormGroup().controls.maxPrice.value | number : '1.0-0' }}</p>
+  </p-panel>
+
+  <!-- Flight stops -->
+  <p-panel toggleable>
+    <ng-template #header>
+      <div class="tw-flex tw-items-center tw-gap-2">
+        <div
+            class="tw-bg-blue-400 tw-text-white tw-rounded-full tw-flex tw-justify-center tw-items-center tw-w-5 tw-h-5">
+          <i class="pi pi-dollar tw-text-xs"></i>
+        </div>
+        <span class="tw-font-bold tw-text-xs">Escale</span>
+      </div>
+    </ng-template>
+    <div class="tw-flex tw-flex-col tw-gap-1">
+      <div class="tw-flex tw-flex-nowrap tw-justify-start tw-items-center tw-gap-x-2.5">
+        <p-radiobutton formControlName="stopover" id="non_stop" inputId="non_stop" name="stopover" value="true"/>
+        <label [for]="'non_stop'" class="tw-text-xs">Sans escale</label>
+      </div>
+      <div class="tw-flex tw-flex-nowrap tw-justify-start tw-items-center tw-gap-x-2.5">
+        <p-radiobutton formControlName="stopover" id="any_stop" inputId="any_stop" name="stopover" value="false"/>
+        <label [for]="'any_stop'" class="tw-text-xs">Peu importe</label>
+      </div>
+    </div>
+  </p-panel>
+
+  <!-- Airlines -->
+  <p-panel toggleable>
+    <ng-template #header>
+      <div class="tw-flex tw-items-center tw-gap-2">
+        <div
+            class="tw-bg-blue-400 tw-text-white tw-rounded-full tw-flex tw-justify-center tw-items-center tw-w-5 tw-h-5">
+          <i class="pi pi-send tw-text-xs"></i>
+        </div>
+        <span class="tw-font-bold tw-text-xs">Compagnies aériennes</span>
+      </div>
+    </ng-template>
+    <div class="tw-max-h-40 tw-overflow-y-scroll md:tw-max-h-96">
+      @for (airline of airlines(); track airline.iata; let odd = $odd) {
+        <div class="tw-flex tw-items-center tw-gap-2 tw-mb-2" [class.tw-bg-surface-100]="odd">
+          <input type="checkbox"
+                 class="tw-mr-1 tw-w-5 tw-h-5 tw-cursor-pointer tw-border tw-rounded-full tw-appearance-none checked:tw-bg-orange-300"
+                 [checked]="airlinesSelection().isSelected(airline.iata)"
+                 (change)="airlinesSelection().toggle(airline.iata)"/>
+          <img src="https://www.opodo.fr/images/onefront/airlines/sm{{airline.iata | uppercase}}.gif"
+               [alt]="airline.iata" class="tw-w-4 tw-h-4 tw-mr-1">
+          <span class="tw-text-xs">{{ airline.name | titlecase }}</span>
+        </div>
+      }
+    </div>
+  </p-panel>
+</div>

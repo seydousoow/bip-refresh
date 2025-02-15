@@ -1,0 +1,188 @@
+<p class="tw-w-full tw-text-xl tw-font-bold tw-mb-6 tw-text-neutral-800">
+  Passager {{ this.f.travelerId.value }} <span
+    class="tw-text-neutral-500 tw-text-sm">({{ narrative(f.travelerType.value) }})</span>
+</p>
+
+<form [formGroup]="form()" class="tw-w-full tw-grid tw-grid-cols-1 tw-gap-x-4 tw-gap-y-6 md:tw-grid-cols-2">
+
+  @if (f.gender) {
+    <div class="tw-flex tw-justify-start tw-items-center tw-space-x-4 md:tw-col-span-2">
+      @for (gender of genders; track gender.value) {
+        <div class="tw-flex tw-flex-nowrap tw-gap-x-4">
+          <p-radiobutton inputId="gender-{{f.travelerId.value}}"
+                         id="gender-{{f.travelerId.value}}"
+                         name="gender-{{f.travelerId.value}}"
+                         [formControl]="f.gender"
+                         size="large"
+                         variant="filled"
+                         [value]="gender.value"/>
+          <label [for]="'gender-' + f.travelerId.value">{{ gender.label }}</label>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+    <p-iftalabel>
+      <input #fName="trackFocus" autocomplete="off" fluid formControlName="firstName" id="firstName"
+             name="firstName" pInputText pSize="small" trackFocus variant="filled"/>
+      <label for="firstName">Prénom (s)</label>
+    </p-iftalabel>
+    <div class="tw-relative tw-w-full tw-h-0">
+      @if (isControlTouched(f.firstName) && f.firstName.errors) {
+        <small class="tw-invalid">Entrer un prénom</small>
+      } @else if (fName.isFocused) {
+        <small class="tw-hint">Doit correspondre à la pièce d'identité</small>
+      }
+    </div>
+  </div>
+
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+    <p-iftalabel>
+      <input #lName="trackFocus" autocomplete="off" fluid formControlName="lastName" id="lastName"
+             name="lastName" pInputText pSize="small" trackFocus variant="outlined"/>
+      <label for="lastName">Nom</label>
+    </p-iftalabel>
+    <div class="tw-relative tw-w-full tw-h-0">
+      @if (isControlTouched(f.lastName) && f.lastName.errors) {
+        <small class="tw-invalid">Entrer un nom</small>
+      } @else if (lName.isFocused) {
+        <small class="tw-hint">Doit correspondre à la pièce d'identité</small>
+      }
+    </div>
+  </div>
+
+  @if (f.dateOfBirth) {
+    <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+      <p-iftalabel>
+        <p-datepicker formControlName="dateOfBirth" iconDisplay="input" showIcon inputId="dateOfBirth"
+                      [minDate]="minDate()" [maxDate]="maxDate()" dateFormat="dd MM yy" readonlyInput size="small"
+                      [defaultDate]="maxDate() ?? today()" styleClass="tw-w-full tw-cursor-pointer"
+                      inputStyleClass="tw-cursor-pointer" variant="filled"/>
+        <label [for]="'dateOfBirth'">Date de naissance</label>
+      </p-iftalabel>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(f.dateOfBirth) && f.dateOfBirth.errors) {
+          <small class="tw-invalid">La date de naissance est requise</small>
+        }
+      </div>
+    </div>
+  }
+
+  @if (f.document && document) {
+    <ng-container [formGroup]="f.document">
+      <p-iftalabel>
+        <p-select formControlName="documentType" inputId="documentType" [options]="documentTypeOptions" checkmark
+                  optionLabel="label" optionValue="value" styleClass="tw-w-full" variant="filled"/>
+        <label [for]="'documentType'">Type de document</label>
+      </p-iftalabel>
+
+      <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+        <p-iftalabel>
+          <input pInputText formControlName="number" id="number" name="number" fluid variant="filled"
+                 autocomplete="off"/>
+          <label for="number">Numéro document</label>
+        </p-iftalabel>
+        <div class="tw-relative tw-w-full tw-h-0">
+          @if (isControlTouched(document.number) && document.number.errors) {
+            <small class="tw-invalid">Numéro document de voyage requis</small>
+          }
+        </div>
+      </div>
+
+      <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+        <p-iftalabel>
+          <p-datepicker formControlName="issuanceDate" iconDisplay="input" showIcon inputId="issuanceDate"
+                        [maxDate]="today()" dateFormat="dd MM yy" readonlyInput size="small" [defaultDate]="today()"
+                        styleClass="tw-w-full tw-cursor-pointer" inputStyleClass="tw-cursor-pointer" variant="filled"/>
+          <label [for]="'issuanceDate'">Date de délivrance</label>
+        </p-iftalabel>
+        <div class="tw-relative tw-w-full tw-h-0">
+          @if (isControlTouched(document.issuanceDate) && document.issuanceDate.errors) {
+            <small class="tw-invalid">Date de délivrance requise</small>
+          }
+        </div>
+      </div>
+
+      <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+        <p-iftalabel>
+          <p-datepicker formControlName="expiryDate" iconDisplay="input" showIcon inputId="expiryDate"
+                        [minDate]="today()" dateFormat="dd MM yy" readonlyInput size="small"
+                        styleClass="tw-w-full tw-cursor-pointer" inputStyleClass="tw-cursor-pointer" variant="filled"/>
+          <label [for]="'expiryDate'">Date d'expiration</label>
+        </p-iftalabel>
+        <div class="tw-relative tw-w-full tw-h-0">
+          @if (isControlTouched(document.expiryDate) && document.expiryDate.errors) {
+            <small class="tw-invalid">Date d'expiration requise</small>
+          }
+        </div>
+      </div>
+
+      <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+        <p-iftalabel>
+          <p-select formControlName="issuanceCountry" inputId="issuanceCountry" [options]="countryOptions" checkmark
+                    optionLabel="label" optionValue="value" variant="filled" virtualScroll filter filterBy="label"
+                    filterPlaceholder="Recherche ..." emptyFilterMessage="Aucun pays trouvé" resetFilterOnHide fluid
+                    virtualScrollItemSize="38">
+            <ng-template #selectedItem let-selectedOption>
+              <div class="tw-flex tw-items-center tw-gap-2 tw-w-20">
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="selectedOption.value" class="flag flag-{{selectedOption.value?.toLowerCase()}} tw-w-6"
+                     src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm">{{ selectedOption.label }}</span>
+              </div>
+            </ng-template>
+            <ng-template #item let-country>
+              <div class="tw-flex tw-items-center tw-gap-2">
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="country.value" class="flag flag-{{country.value?.toLowerCase()}} tw-w-6"
+                     src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm tw-truncate">{{ country.label | titlecase }}</span>
+              </div>
+            </ng-template>
+          </p-select>
+          <label [for]="'issuanceCountry'">Pays de délivrance</label>
+        </p-iftalabel>
+        <div class="tw-relative tw-w-full tw-h-0">
+          @if (isControlTouched(document.issuanceCountry) && document.issuanceCountry.errors) {
+            <small class="tw-invalid">Pays de délivrance requis</small>
+          }
+        </div>
+      </div>
+
+      <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+        <p-iftalabel>
+          <p-select formControlName="nationality" inputId="nationality" [options]="countryOptions" checkmark fluid
+                    optionLabel="label" optionValue="value" variant="filled" virtualScroll filter filterBy="label"
+                    filterPlaceholder="Recherche ..." emptyFilterMessage="Aucun pays trouvé"
+                    resetFilterOnHide virtualScrollItemSize="38">
+            <ng-template #selectedItem let-selectedOption>
+              <div class="tw-flex tw-items-center tw-gap-2 tw-w-20">
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="selectedOption.value" class="flag flag-{{selectedOption.value?.toLowerCase()}} tw-w-6"
+                     src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm">{{ selectedOption.label }}</span>
+              </div>
+            </ng-template>
+            <ng-template #item let-country>
+              <div class="tw-flex tw-items-center tw-gap-2">
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="country.value" class="flag flag-{{country.value?.toLowerCase()}} tw-w-6"
+                     src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm tw-truncate">{{ country.label | titlecase }}</span>
+              </div>
+            </ng-template>
+          </p-select>
+
+          <label [for]="'nationality'">Nationalité</label>
+        </p-iftalabel>
+        <div class="tw-relative tw-w-full tw-h-0">
+          @if (isControlTouched(document.nationality) && document.nationality.errors) {
+            <small class="tw-invalid">La nationalité est requise</small>
+          }
+        </div>
+      </div>
+    </ng-container>
+  }
+
+</form>

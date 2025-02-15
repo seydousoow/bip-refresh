@@ -1,0 +1,114 @@
+<div class="tw-bg-white tw-p-2 tw-rounded-lg tw-shadow-lg tw-transition-shadow hover:tw-shadow-xl">
+  <div class="tw-grid tw-grid-cols-1 tw-gap-2">
+    @for (itinerary of flight().itineraries; track itinerary; let first = $first; let last = $last) {
+      <!-- direction -->
+      <div>
+        <span class="tw-text-sm tw-text-gray-800 tw-font-bold">{{ (first ? 'Aller' : 'Retour') | uppercase }}
+          -&nbsp;</span>
+        <span
+            class="tw-text-xs tw-text-neutral-500"> {{ getAirlineName(itinerary.segments[0].carrierCode) | titlecase }}</span>
+      </div>
+      <div class="tw-flex tw-flex-nowrap tw-justify-start tw-items-center tw-gap-2">
+        <p-avatar
+            image="https://www.opodo.fr/images/onefront/airlines/sm{{itinerary.segments[0].carrierCode | uppercase}}.gif"
+            shape="circle"/>
+
+        <div class="tw-flex-1 tw-flex-nowrap tw-flex tw-justify-between tw-items-center tw-box-border tw-min-w-0">
+          <div class="md:tw-w-36">
+            <p class="tw-text-lg tw-font-bold tw-text-gray-800">{{ formatTime(itinerary.segments[0].departure) }}</p>
+            <p class="tw-text-xs tw-truncate tw-text-neutral-400">
+              <span>{{ itinerary.segments[0].departure.iataCode | uppercase }}</span>
+              <span
+                  class="tw-hidden sm:tw-inline-block"> {{ parseAirportInformation(itinerary.segments[0].departure) }}</span>
+            </p>
+          </div>
+
+          <div class="tw-flex tw-flex-grow tw-flex-col tw-items-stretch tw-mx-4 tw-min-w-0 tw-box-border tw-h-0">
+            <div class="tw-relative tw-min-w-0 tw-box-border">
+              <hr
+                  class="tw-m-0 tw-hr tw-h-2 tw-border-t tw-rounded tw-border-gray-300"/>
+              <div
+                  class="tw-box-border tw-min-w-0 tw-flex tw-py-1 tw-px-3 tw-items-center tw-justify-center tw-absolute tw-rounded-2xl tw-bg-gray-300 tw-left-1/2 tw-top-0 -tw-translate-x-1/2 -tw-translate-y-1/2">
+                <div class="tw-flex tw-items-center tw-px-1 tw-min-w-max tw-box-border">
+                  <span
+                      class="tw-text-neutral-500 tw-text-sm">{{ formatFlightDuration(itinerary.duration) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:tw-w-36">
+            <p
+                class="tw-text-lg tw-font-bold tw-text-gray-800">{{ formatTime(itinerary.segments[itinerary.segments.length - 1].arrival) }}</p>
+            <p class="tw-text-xs tw-truncate tw-text-neutral-400">
+              <span>{{ itinerary.segments[itinerary.segments.length - 1].arrival.iataCode | uppercase }}</span>
+              <span
+                  class="tw-hidden sm:tw-inline-block"> {{ parseAirportInformation(itinerary.segments[itinerary.segments.length - 1].arrival) }}</span>
+            </p>
+          </div>
+          <div class="tw-flex tw-flex-nowrap tw-gap-x-2">
+            @if (hasSuitcaseIncluded(itinerary.segments) > 0) {
+              <p-overlaybadge [value]="hasSuitcaseIncluded(itinerary.segments)"
+                              styleClass="tw-bg-transparent tw-border-0 tw-text-xs tw-outline-none tw-text-blue-400"
+                              badgeSize="small">
+                <svg viewBox="0 0 24 24" class="tw-w-5 tw-h-5 tw-fill-neutral-500" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                      d="M15 9.25H9a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 0 1.5m.75 3.75a.76.76 0 0 0-.75-.75H9a.75.75 0 0 0 0 1.5h6a.76.76 0 0 0 .75-.75m0 4.5a.76.76 0 0 0-.75-.75H9a.75.75 0 0 0 0 1.5h6a.76.76 0 0 0 .75-.75m4-12v15a2.25 2.25 0 0 1-2.25 2.25h-1.75v.5a.75.75 0 0 1-1.5 0v-.5h-4.5v.5a.75.75 0 0 1-1.5 0v-.5H6.5a2.25 2.25 0 0 1-2.25-2.25v-15A2.25 2.25 0 0 1 6.5 3.25h1.75v-2C8.25.56 8.81 0 9.5 0h5c.69 0 1.25.56 1.25 1.25v2h1.75a2.25 2.25 0 0 1 2.25 2.25m-10-2.25h4.5V1.5h-4.5zm8.5 2.25a.76.76 0 0 0-.75-.75h-11a.76.76 0 0 0-.75.75v15a.76.76 0 0 0 .75.75h11a.76.76 0 0 0 .75-.75z">
+                  </path>
+                </svg>
+              </p-overlaybadge>
+            }
+
+            <svg viewBox="0 0 24 24" class="tw-w-5 tw-h-5 tw-fill-neutral-500" xmlns="http://www.w3.org/2000/svg">
+              <path
+                  d="M15 12.75H9a1.76 1.76 0 0 0-1.75 1.75v4A1.76 1.76 0 0 0 9 20.25h6a1.76 1.76 0 0 0 1.75-1.75v-4A1.76 1.76 0 0 0 15 12.75m-6 1.5h6a.25.25 0 0 1 .25.25v.62h-6.5v-.62a.25.25 0 0 1 .25-.25m6 4.5H9a.25.25 0 0 1-.25-.25v-1.88h3.5v.26a.75.75 0 0 0 1.5 0v-.26h1.5v1.88a.25.25 0 0 1-.25.25m.69-14.33a3.73 3.73 0 0 0-7.38 0A4.74 4.74 0 0 0 4.75 9v11.5A2.25 2.25 0 0 0 7 22.75h10a2.25 2.25 0 0 0 2.25-2.25V9a4.74 4.74 0 0 0-3.56-4.58M12 2.75a2.24 2.24 0 0 1 2.11 1.5H9.89A2.24 2.24 0 0 1 12 2.75m5.75 17.75a.76.76 0 0 1-.75.75H7a.76.76 0 0 1-.75-.75V9A3.26 3.26 0 0 1 9.5 5.75h5A3.26 3.26 0 0 1 17.75 9z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      @if (first) {
+        <hr class="tw-m-0 tw-hr tw-h-2 tw-border-t tw-rounded tw-border-gray-300"/>
+      }
+    }
+
+    <div class="tw-flex tw-flex-nowrap tw-gap-2">
+      <div
+          class="tw-text-2xl tw-font-bold tw-text-orange-500 tw-border tw-rounded-xl tw-border-neutral-300 tw-flex tw-flex-grow tw-flex-row tw-items-end tw-justify-end tw-p-2 md:tw-max-w-[50%]">
+        {{ grandTotal }}
+      </div>
+
+      <div class="tw-flex tw-flex-row tw-justify-end tw-flex-grow tw-p-2">
+        <p-button (click)="onSelect.emit()" raised rounded severity="warn" size="large">
+          Sélectionner
+        </p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flight Details -->
+<!--  <div class="tw-flex tw-justify-between tw-items-center tw-mt-4">-->
+<!-- <div class="tw-text-center">
+    <div class="tw-text-xl tw-font-bold">{{ formatTime(flight.departureTime) }}</div>
+    <div class="tw-text-sm">{{ flight.departure }}</div>
+</div> -->
+
+<!-- Duration and Stops -->
+<!-- <div class="tw-flex-1 tw-mx-4 tw-text-center">
+    <div class="tw-text-sm tw-text-gray-500">{{ flight.duration }}</div>
+    <div class="tw-relative tw-border-t tw-border-gray-300 tw-my-2">
+        @if (flight.stops.length > 0) {
+        <div
+            class="tw-absolute tw-top-1/2 tw-left-1/2 tw-transform -tw-translate-x-1/2 -tw-translate-y-1/2 tw-bg-white tw-px-2 tw-text-xs tw-text-gray-500">
+            {{ flight.stops.length }} escale(s)
+        </div>
+        }
+    </div>
+</div>
+
+<div class="tw-text-center">
+    <div class="tw-text-xl tw-font-bold">{{ formatTime(flight.arrivalTime) }}</div>
+    <div class="tw-text-sm">{{ flight.destination }}</div>
+</div> -->
+<!--  </div>-->

@@ -1,0 +1,76 @@
+@if (!updating()) {
+  <div class="tw-space-y-2 tw-w-full tw-grid tw-grid-cols-1 md:tw-mr-2">
+    <div class="tw-w-full tw-flex tw-justify-around tw-items-center tw-gap-x-2 tw-font-medium tw-text-neutral-800 md:tw-justify-start md:tw-gap-x-32">
+      @let passengers = searchForm().adults + searchForm().children + searchForm().infants;
+      <span>{{ searchForm().oneWay ? 'Aller-simple' : 'Aller-retour' }}</span>
+
+      <span>{{ passengers }} passager{{ passengers > 1 ? 's' : '' }}</span>
+    </div>
+
+    <div class="tw-w-full tw-flex tw-flex-col tw-justify-start tw-items-center md:tw-flex-row md:tw-gap-x-32 md:tw-justify-between">
+      <h2 class="tw-text-lg tw-text-neutral-800 tw-font-bold">
+        {{ airportDescription(searchForm().departure) }} → {{ airportDescription(searchForm().destination) }}
+      </h2>
+      <p class="tw-text-gray-600">
+        {{ formatDate(searchForm().departureDate) }}
+        @if (!searchForm().oneWay) {
+          → {{ formatDate(searchForm().returnDate!) }}
+        }
+      </p>
+    </div>
+  </div>
+} @else {
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-2 tw-flex-grow tw-w-full" [formGroup]="form">
+    <div class="tw-w-full tw-w-flex tw-justify-center tw-items-center sm:tw-justify-start">
+      <p-selectbutton formControlName="oneWay" [options]="stateOptions" aria-labelledby="basic" optionLabel="label" optionValue="value"/>
+    </div>
+
+    <div class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-gap-0">
+      <p-iftalabel class="tw-flex-grow">
+        <p-autocomplete panelStyleClass="airport-selection-autocomplete" inputStyleClass="tw-text-xs tw-w-full" minLength="0" scrollHeight="min(400px, 70vh)"
+                        [suggestions]="filteredSelection" (completeMethod)="filterGroupedCity($event.query)" (onFocus)="filterGroupedCity()"
+                        placeholder="Origine" optionLabel="airportName" optionValue="iata" formControlName="originLocationCode"
+                        fluid dataKey="iata" completeOnFocus="true" inputId="origin" virtualScroll virtualScrollItemSize="50">
+          <ng-template let-item #item>
+            <bip-airport-selection-item [airport]="item"/>
+          </ng-template>
+        </p-autocomplete>
+        <label [for]="'origin'">Origine</label>
+      </p-iftalabel>
+
+      <p-iftalabel class="tw-flex-grow">
+        <p-autocomplete panelStyleClass="airport-selection-autocomplete" inputStyleClass="tw-text-xs tw-w-full" minLength="0" scrollHeight="min(400px, 70vh)"
+                        [suggestions]="filteredSelection" (completeMethod)="filterGroupedCity($event.query)" (onFocus)="filterGroupedCity()"
+                        placeholder="Destination" optionLabel="airportName" optionValue="iata" formControlName="destinationLocationCode"
+                        fluid dataKey="iata" completeOnFocus="true" inputId="destination" virtualScroll virtualScrollItemSize="50">
+          <ng-template let-item #item>
+            <bip-airport-selection-item [airport]="item"/>
+          </ng-template>
+        </p-autocomplete>
+        <label [for]="'destination'">Destination</label>
+      </p-iftalabel>
+
+      <div class="tw-grid tw-grid-cols-2 tw-gap-x-1 tw-w-full md:tw-gap-x-0 md:tw-w-72">
+        <p-iftalabel>
+          <p-datepicker formControlName="departureDate" size="small" [maxDate]="maxDate" [minDate]="minDate" readonlyInput dateFormat="dd MM yy" inputId="departure__date"
+                        inputStyleClass="tw-text-xs"/>
+          <label [for]="'departure__date'">Date de départ</label>
+        </p-iftalabel>
+
+        <p-iftalabel>
+          <p-datepicker formControlName="returnDate" size="small" [minDate]="returnMinDate()" readonlyInput dateFormat="dd MM yy" inputId="return__date" readonlyInput
+                        inputStyleClass="tw-text-xs"/>
+          <label [for]="'return__date'">Date de retour</label>
+        </p-iftalabel>
+      </div>
+    </div>
+  </div>
+}
+
+<div class="tw-flex tw-items-center tw-justify-center tw-flex-nowrap tw-gap-2 tw-w-full md:tw-flex-wrap md:tw-w-fit">
+  <p-button (onClick)="toggleUpdate()" [label]="updating() ? 'Rechercher' : 'Modifier'" icon="pi pi-check" rounded severity="info" size="small"/>
+
+  @if (updating()) {
+    <p-button severity="warn" label="Annuler" rounded size="small" icon="pi pi-times" (onClick)="refreshForm()"/>
+  }
+</div>

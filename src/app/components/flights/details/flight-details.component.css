@@ -1,0 +1,3 @@
+:host {
+    @apply tw-block tw-w-full tw-mx-auto tw-container lg:tw-max-w-7xl;
+}

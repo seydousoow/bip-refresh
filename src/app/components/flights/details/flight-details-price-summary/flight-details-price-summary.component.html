@@ -1,0 +1,56 @@
+<div [style.background-image]="'url(https://www.opodo.fr/images/destinations/394x240/' + cityCode() + '.jpg)'"
+     class="tw-w-full tw-bg-cover tw-bg-center tw-bg-no-repeat tw-rounded-t-lg tw-h-32 tw-p-4 tw-text-white tw-flex-grow-0">
+  <p class="tw-w-full">Votre voyage à</p>
+  <p class="tw-font-bold tw-text-xl tw-w-full">{{ destination() }}</p>
+</div>
+<!--  Passengers -->
+<div
+    class="tw-h-[calc(100%-8rem)] tw-w-full tw-overflow-auto [&::-webkit-scrollbar]:tw-w-0.5 [&::-webkit-scrollbar-thumb]:tw-bg-orange-300 [&::-webkit-scrollbar-track]:tw-bg-neutral-100 tw-flex tw-flex-col tw-justify-start tw-items-baseline">
+  <div class="tw-flex-grow-0 tw-flex tw-flex-col tw-w-full tw-px-2.5 tw-pt-2">
+    <p class="tw-text-sm tw-font-bold tw-text-neutral-700 tw-mb-2">Passagers</p>
+
+    @for (offer of passengers; track offer) {
+      <p class="tw-text-xs tw-text-neutral-500 tw-font-medium">{{ offer }}</p>
+    }
+  </div>
+
+  <hr class="tw-flex-grow-0 tw-hr tw-border-neutral-300"/>
+  <p class="tw-text-center tw-w-full tw-text-sm tw-font-bold tw-text-neutral-800 tw-mb-3 tw-italic">Services supplémentaires</p>
+
+  <div class="tw-flex-grow-0 tw-flex tw-flex-col tw-w-full tw-px-2.5">
+    <p class="tw-text-sm tw-font-bold tw-text-neutral-700 tw-mb-2">Bagages en soute</p>
+    @if (bags().quantity === 0) {
+      <p class="tw-text-xs tw-mb-3">Aucun bagage en soute</p>
+    }
+
+    <div class="tw-flex tw-flex-nowrap tw-justify-between tw-items-center">
+      <span class="tw-text-neutral-700 tw-font-medium tw-text-xs">Total</span>
+      <span class="tw-text-neutral-800 tw-font-bold tw-text-sm">{{ bags().price | currency : 'XOF' }}</span>
+    </div>
+  </div>
+  <hr class="tw-flex-grow-0 tw-hr tw-border-neutral-300"/>
+
+  <div class="tw-flex-grow-0 tw-flex tw-flex-col tw-w-full tw-px-2.5">
+    <p class="tw-text-sm tw-font-bold tw-text-neutral-700 tw-mb-2">Sièges</p>
+
+  </div>
+  <hr class="tw-flex-grow-0 tw-hr tw-border-neutral-300"/>
+
+  <div class="tw-flex-grow tw-flex tw-flex-col tw-w-full tw-bg-orange-100 tw-px-2.5 tw-pt-4 tw-py-6 tw-rounded-b-2xl tw-space-y-1 tw-justify-start tw-items-center">
+    <div class="tw-flex tw-flex-nowrap tw-justify-between tw-items-center tw-w-full tw-text-gray-500 tw-font-medium tw-text-sm">
+      <span>Prix</span>
+      <span>{{ flightPrice() | currency : 'XOF' }}</span>
+    </div>
+
+    <div class="tw-flex tw-flex-nowrap tw-justify-between tw-items-center tw-w-full tw-text-gray-500 tw-font-medium tw-text-sm">
+      <span>Frais de service</span>
+      <span>{{ bipFees() | currency : 'XOF' }}</span>
+    </div>
+
+    <div class="tw-flex tw-flex-nowrap tw-justify-between tw-items-center tw-pt-4 tw-w-full tw-text-neutral-800 tw-font-bold">
+      <span class="tw-text-sm">Total</span>
+      <span>{{ totalFlightPrice() | currency : 'XOF' }}</span>
+    </div>
+  </div>
+</div>
+

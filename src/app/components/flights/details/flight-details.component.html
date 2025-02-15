@@ -1,0 +1,59 @@
+@if (loading()) {
+  <div class="tw-grid tw-grid-cols-4 tw-gap-x-1 tw-border tw-border-neutral-200 tw-rounded-lg">
+    <div class="tw-grid tw-space-y-4 tw-col-span-3">
+      <p-skeleton height="150px" styleClass="mb-2"/>
+      <p-skeleton height="200px" styleClass="mb-2"/>
+      <p-skeleton height="250px" styleClass="mb-2"/>
+    </div>
+    <div class="tw-grid tw-grid-cols-1">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="tw-mb-3">
+          <p-skeleton width="100%" height="2rem" class="tw-w-full" styleClass="tw-mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1rem" class="tw-w-full" styleClass="tw-mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1rem" class="tw-w-full" styleClass="tw-mb-2"></p-skeleton>
+          <p-skeleton width="50%" height=".5rem" class="tw-w-full"></p-skeleton>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <form class="tw-flex tw-flex-nowrap tw-justify-between tw-items-start tw-flex-row tw-space-x-4 tw-mx-0 tw-px-1 tw-mb-1 md:tw-mb-2 lg:tw-mx-2">
+    <div class="tw-space-y-6 tw-flex-grow lg:tw-col-span-3">
+      <div class="tw-segment tw-p-4" bipFlightDetailsSummary [itineraries]="itineraries"></div>
+
+      @if (travelerFormGroup().controls['travelers']) {
+        <ng-container [formGroup]="travelerFormGroup()">
+          <div formArrayName="travelers" class="tw-space-y-6">
+            @for (traveler of travelers.controls; track traveler; let i = $index) {
+              <div class="tw-segment tw-border-t-gray-300 tw-p-4" bipDetailsTraveler [form]="traveler" [returnDate]="returnDate"></div>
+            }
+          </div>
+        </ng-container>
+      }
+      <div class="tw-segment tw-p-4" bipFlightDetailsContact></div>
+
+      @if (flightOffers.length > 0) {
+        <div class="tw-segment tw-p-4 tw-max-w-[100vw] md:tw-max-w-none" bipFlightBagInfo [flightOffers]="flightOffers" [bagInclusion]="bags"
+             [(selectedBagCount)]="selectedBagCount"></div>
+      }
+
+      <div class="tw-segment tw-p-4 tw-max-w-[100vw] md:tw-max-w-none"
+           [(displaySeatMap)]="displaySeatMap"
+           (confirm)="updateSeatPricing($event)"
+           [class.tw-hidden]="!displaySeatMap()"
+           [flightOffer]="flightOffers[0]"
+           bipFlightSeatMapping></div>
+
+      <div class="tw-segment tw-p-4 tw-flex tw-justify-end tw-items-center tw-shadow-md">
+        <p-button label="Procéder au paiement" severity="warn" icon="pi pi-check" rounded (click)="continueBooking()"/>
+      </div>
+    </div>
+
+    <aside
+        class="tw-hidden md:tw-flex tw-flex-wrap tw-w-60 tw-sticky tw-top-4 tw-rounded-2xl tw-border tw-border-transparent tw-shadow-2xl tw-h-auto tw-max-h-[calc(100vh-150px)]"
+        bipFlightDetailsPriceSummary
+        [bags]="bagComputations()"
+        [flightOffers]="flightOfferPricing"
+        [bipFees]="bipFees()"></aside>
+  </form>
+}

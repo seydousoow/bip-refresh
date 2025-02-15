@@ -1,0 +1,13 @@
+<section class="tw-w-screen tw-relative flight__search__section">
+  <div class="tw-w-full tw-h-full tw-absolute">
+    <p-galleria [showIndicatorsOnItem]="false" [showIndicators]="false" [showThumbnails]="false" [value]="flightSlider"
+                autoPlay circular containerClass="tw-w-full flight__search__gallery !tw-border-0">
+      <ng-template let-item pTemplate="item">
+        <img [ngSrc]="item" alt="" class="tw-w-full tw-block" fill priority/>
+      </ng-template>
+    </p-galleria>
+  </div>
+  <div class="tw-relative tw-h-full tw-w-full tw-flex tw-justify-center tw-items-center tw-z-20">
+    <bip-search/>
+  </div>
+</section>

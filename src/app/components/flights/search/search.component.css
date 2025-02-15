@@ -1,0 +1,11 @@
+:host {
+    @apply tw-block tw-w-full tw-max-w-sm tw-mx-4 tw-p-2.5 tw-bg-opacity-60 tw-bg-black tw-rounded-xl tw-shadow-lg tw-text-white sm:tw-mx-auto md:tw-max-w-xl lg:tw-max-w-2xl;
+}
+
+.p-badge {
+    @apply tw-cursor-pointer tw-bg-orange-500 tw-text-black tw-select-none tw-text-base;
+
+    &.disabled {
+        @apply tw-cursor-not-allowed tw-bg-orange-200 tw-pointer-events-none;
+    }
+}

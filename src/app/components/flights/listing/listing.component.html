@@ -1,0 +1,55 @@
+<!-- Search Summary -->
+<div class="tw-bg-white tw-shadow-md tw-p-2 tw-mx-3 tw-mb-4">
+  @if (loading()) {
+    <div class="tw-flex tw-gap-4">
+      <p-skeleton width="200px" height="40px"></p-skeleton>
+      <p-skeleton width="200px" height="40px"></p-skeleton>
+      <p-skeleton width="150px" height="40px"></p-skeleton>
+    </div>
+  } @else if (searchModel()) {
+    <div class="tw-flex tw-items-center tw-justify-between tw-flex-col md:tw-flex-row tw-gap-3 md:tw-gap-1.5"
+         bipListingFormUpdate [(searchForm)]="searchModel" (update)="onSearchVariablesUpdate()"></div>
+  }
+</div>
+
+<!-- Main Content -->
+<div class="tw-flex tw-flex-nowrap tw-gap-x-2">
+  <!-- Filters Sidebar -->
+  <aside class="tw-w-full tw-p-2 tw-hidden md:tw-w-52 md:tw-block lg:tw-w-72">
+    @if (loading()) {
+      <div class="tw-space-y-4">
+        <p-skeleton height="50px"></p-skeleton>
+        <p-skeleton height="100px"></p-skeleton>
+        <p-skeleton height="150px"></p-skeleton>
+      </div>
+    } @else if (filterFormGroup) {
+      <bip-flight-listing-filter [filterFormGroup]="filterFormGroup" [airlines]="airlines" [maxRangePrice]="maxPriceRange" [airlinesSelection]="airlinesSelection"/>
+    }
+  </aside>
+
+  <!-- Flight Results -->
+  <div class="tw-w-full tw-py-2 tw-px-4 tw-relative">
+    @if (loading()) {
+      @for (item of [1, 2, 3]; track item) {
+        <p-skeleton height="150px"></p-skeleton>
+      }
+    } @else {
+      <ul class="tw-hidden tw-w-full tw-mb-4 tw-border tw-text-neutral-800 tw-border-neutral-300 tw-h-14 tw-relative tw-grid-cols-3 tw-gap-0 md:tw-grid">
+        @for (item of sortOptions; track item.value) {
+          <li [attr.data-value]="item.value" (click)="updateSort(item.value)"
+              [ngClass]="item.selected ? 'tw-border-b tw-border-orange-500 tw-text-orange-500 tw-pointer-events-none tw-font-bold' : 'tw-cursor-pointer'"
+              class="tw-text-center tw-place-content-center tw-select-none">
+            {{ item.label }}
+          </li>
+        }
+      </ul>
+
+      <div class="tw-flex tw-flex-col tw-space-y-5" (scrolled)="loadMore()" [infiniteScrollDisabled]="isLast" infiniteScroll>
+        @for (item of displayedFlights; track item.id) {
+          <bip-listing-item [flight]="item" [airlines]="airlines" (onSelect)="selectFlight(item)"/>
+        }
+      </div>
+      <p-scrolltop target="window" threshold="1000" icon="pi pi-arrow-up" behavior="smooth" [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"/>
+    }
+  </div>
+</div>

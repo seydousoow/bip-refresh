@@ -1,1 +1,90 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+}
+
+@layer components {
+    :root {
+        --p-select-option-focus-background: rgb(221, 221, 221);
+        --p-togglebutton-content-checked-background: rgb(253, 186, 116);
+    }
+
+    html, body {
+        text-rendering: optimizeLegibility;
+    }
+
+    .airport-selection-autocomplete {
+        .p-autocomplete-list {
+            @apply tw-w-full;
+        }
+
+        .p-autocomplete-option {
+            @apply tw-py-0 tw-px-2 tw-w-full tw-border tw-border-solid tw-border-red-400;
+        }
+    }
+
+    .p-floatlabel.p-floatlabel-on > label {
+        @apply tw-font-medium tw-text-sm tw-text-gray-900 -tw-top-1.5 tw-px-2 tw-rounded-t-lg;
+    }
+
+    .flight__search__gallery .p-galleria-item,
+    .flight__search__section {
+        @apply tw-relative tw-h-screen sm:tw-h-96 lg:tw-h-[500px];
+    }
+
+    .tw-segment {
+        @apply tw-px-1 tw-py-2 tw-relative tw-shadow-xl tw-shadow-neutral-300 tw-border tw-border-neutral-200 tw-bg-zinc-100 tw-rounded-lg tw-border-t-orange-500 tw-border-t-4;
+    }
+
+    .tw-hr {
+        @apply tw-block tw-mx-auto tw-my-2 tw-overflow-hidden;
+        unicode-bidi: isolate;
+    }
+
+    .tw-seat-tooltip .p-tooltip-text {
+        @apply tw-border tw-border-neutral-400 tw-bg-neutral-100 tw-shadow-2xl tw-rounded-lg tw-text-neutral-700 tw-p-0 tw-w-40;
+    }
+
+    .tw-invalid, .tw-hint {
+        @apply tw-text-red-600 tw-absolute tw-mx-1.5 tw-transition-opacity tw-select-none tw-font-normal tw-pointer-events-none tw-text-xs;
+    }
+
+    .tw-hint {
+        @apply tw-text-neutral-400;
+    }
+
+    .tw-left-border-indice {
+        @apply before:tw-bg-orange-500 before:tw-rounded-r before:tw-content-[''] before:tw-h-6 before:tw-left-0 before:-tw-mt-3 before:tw-absolute before:tw-top-1/2 before:tw-w-1.5;
+    }
+
+    .p-select.full-overlay {
+        @apply tw-w-40;
+
+        .p-select-overlay {
+            @apply tw-w-72 sm:tw-w-96;
+        }
+
+        .p-select-header {
+            @apply tw-p-1.5;
+        }
+
+        .p-select-filter {
+            @apply tw-w-full;
+        }
+
+        &.no-dropdown {
+            .p-select-dropdown {
+                @apply tw-hidden;
+            }
+        }
+    }
+}

@@ -1,0 +1,67 @@
+<p class="tw-w-full tw-text-xl tw-font-bold tw-mb-6 tw-text-neutral-800">Itinéraires</p>
+
+@for (itinerary of itineraries(); track itinerary.segments; let first = $first; let last = $last) {
+  <div class="tw-relative tw-w-full">
+    <!--      Header of resume-->
+    <div class="tw-flex tw-flex-col sm:tw-flex-row tw-justify-between tw-place-items-center tw-flex-nowrap tw-mb-4">
+      <div class="tw-flex tw-flex-nowrap tw-items-center tw-justify-start tw-space-x-2">
+        <div class="tw-relative tw-w-16 tw-h-9">
+          <img alt="logo" fill ngSrc="images/airlines/{{itinerary.segments[0].carrierCode}}.png">
+        </div>
+        <span class="tw-mx-3 tw-text-base tw-font-bold">{{ first ? 'Aller ' : 'Retour ' }}</span>
+        <span class="tw-text-sm tw-font-medium">{{ airlineName(itinerary.segments[0]) }} </span>
+      </div>
+      <div
+          class="tw-text-lg tw-font-medium">{{ itinerary.segments[0].departure.at | date : 'EEEE dd/MM' | titlecase }}
+      </div>
+    </div>
+    <!--      End Header of resume-->
+
+    <!--      Resume Body-->
+    <div class="tw-py-0 tw-flex tw-flex-row tw-justify-start tw-items-start">
+      <div class="tw-grow tw-flex tw-flex-col sm:tw-flex-row tw-justify-between md:tw-pr-2 tw-gap-x-3">
+        <div class="tw-w-auto">
+          <div class="tw-flex tw-flex-nowrap tw-gap-x-2 tw-text-lg tw-text-bold">
+            <span class="tw-font-bold">{{ itinerary.segments[0].departure.at | date : 'HH:mm' }}</span>
+            <span>({{ itinerary.segments[0].departure.iataCode | uppercase }})</span>
+          </div>
+          <div class="tw-text-sm tw-font-medium tw-text-neutral-500">
+            <p>{{ terminale(itinerary.segments[0].departure) | titlecase }}</p>
+            <p>{{ airportLocation(itinerary.segments[0].departure.iataCode) }}</p>
+          </div>
+        </div>
+
+        <div class="tw-flex tw-flex-col tw-content-center tw-items-center tw-w-full md:tw-w-max tw-mx-0 tw-my-auto">
+          <p class="tw-text-xs tw-font-medium tw-text-emerald-500">{{ flightModel(itinerary.segments[0]) }}</p>
+          <div class="tw-flex tw-flex-row tw-flex-nowrap tw-w-[calc(100%_+_10px)] tw-content-center tw-items-center">
+            <div class="tw-w-2 tw-h-2 tw-border-2 tw-border-neutral-300 tw-rounded-full"></div>
+            <div class="tw-h-0.5 tw-w-full tw-bg-neutral-300"></div>
+            <div class="tw-w-2 tw-h-2 tw-border-2 tw-border-neutral-300 tw-rounded-full tw-bg-neutral-300"></div>
+          </div>
+          <p class="tw-text-xs tw-font-medium tw-text-emerald-500">{{ numberOfStops(itinerary.segments) }}</p>
+        </div>
+
+        <div class="tw-w-auto">
+          <div class="tw-flex tw-flex-nowrap tw-gap-x-2 tw-text-lg tw-text-bold">
+            <span
+                class="tw-font-bold">{{ itinerary.segments[itinerary.segments.length - 1].arrival.at | date : 'HH:mm' }}</span>
+            <span>({{ itinerary.segments[itinerary.segments.length - 1].arrival.iataCode | uppercase }})</span>
+          </div>
+          <div class="tw-text-sm tw-font-medium tw-text-neutral-500">
+            <p>{{ terminale(itinerary.segments[itinerary.segments.length - 1].arrival) | titlecase }}</p>
+            <p>{{ airportLocation(itinerary.segments[itinerary.segments.length - 1].arrival.iataCode) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tw-w-21 tw-text-lg tw-text-orange-600 tw-font-bold">
+        {{ duration(itinerary.segments[0].departure.at, itinerary.segments[itinerary.segments.length - 1].arrival.at) }}
+      </div>
+    </div>
+    <!--      End Resume Body-->
+
+    @if (!last) {
+      <hr class="tw-hr tw-border-neutral-300 tw-my-4"/>
+    }
+  </div>
+}

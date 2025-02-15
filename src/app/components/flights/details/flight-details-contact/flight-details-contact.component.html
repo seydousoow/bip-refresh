@@ -1,0 +1,144 @@
+<p class="tw-w-full tw-text-xl tw-font-bold tw-mb-6 tw-text-neutral-800">Coordonnées</p>
+
+<form [formGroup]="contactForm" class="tw-w-full tw-grid tw-grid-cols-1 tw-gap-x-4 tw-gap-y-6 md:tw-grid-cols-2">
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+    <p-inputgroup>
+      <p-inputgroup-addon><i class="pi pi-at"></i></p-inputgroup-addon>
+      <input autocomplete="email" formControlName="emailAddress" name="emailAddress" pInputText
+             placeholder="Adresse mail" type="email"/>
+    </p-inputgroup>
+    <div class="tw-relative tw-w-full tw-h-0">
+      @if (isControlTouched(f.emailAddress) && (f.emailAddress.hasError('required') || f.emailAddress.hasError('email'))) {
+        <small class="tw-invalid">Entré une adresse e-mail valide.</small>
+      }
+    </div>
+  </div>
+
+  <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+    <p-inputgroup>
+      <p-inputgroup-addon><i class="pi pi-check"></i></p-inputgroup-addon>
+      <input autocomplete="off" formControlName="confirmEmail" name="confirmEmail" pInputText
+             placeholder="Confirmer adresse mail"/>
+    </p-inputgroup>
+    <div class="tw-relative tw-w-full tw-h-0">
+      @if (isControlTouched(f.confirmEmail)) {
+        @if (f.confirmEmail.hasError('required')) {
+          <small class="tw-invalid">Confirmer l'adresse mail</small>
+        } @else if (f.confirmEmail.hasError('mustMatch')) {
+          <small class="tw-invalid">Les adresses doivent correspondre.</small>
+        }
+      }
+    </div>
+  </div>
+
+  <ng-container [formGroup]="contactForm.controls.address">
+    <div class="tw-grid tw-grid-cols-1 tw-gap-y-1 md:tw-col-span-2">
+      <p-input-group>
+        <p-inputgroup-addon><i class="pi pi-home"></i></p-inputgroup-addon>
+        <input autocomplete="shipping address-level1" formControlName="lines" name="lines" pInputText placeholder="Adresse" type="text"/>
+      </p-input-group>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(address.lines) && address.lines.errors) {
+          <small class="tw-invalid">Veuillez saisir votre adresse.</small>
+        }
+      </div>
+    </div>
+
+    <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+      <p-inputgroup>
+        <p-inputgroup-addon><i class="pi pi-inbox"></i></p-inputgroup-addon>
+        <input autocomplete="shipping postal-code" formControlName="postalBox" name="postalBox" pInputText placeholder="Code postal"
+               type="text"/>
+      </p-inputgroup>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(address.postalBox) && address.postalBox.errors) {
+          <small class="tw-invalid">Veuillez saisir votre code postal.</small>
+        }
+      </div>
+    </div>
+
+    <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+      <p-inputgroup>
+        <p-inputgroup-addon><i class="pi pi-map-marker"></i></p-inputgroup-addon>
+        <input autocomplete="shipping address-level2" formControlName="stateName" name="stateName" pInputText placeholder="Ville" type="text"/>
+      </p-inputgroup>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(address.stateName) && address.stateName.errors) {
+          <small class="tw-invalid">Veuillez saisir votre code postal.</small>
+        }
+      </div>
+    </div>
+
+    <div class="tw-grid tw-grid-cols-1 tw-gap-y-1">
+      <p-select [options]="countryOptions" checkmark emptyFilterMessage="Aucun pays trouvé"
+                filter filterBy="label" filterPlaceholder="Recherche ..." fluid formControlName="countryCode"
+                inputId="countryCode" optionLabel="label" optionValue="value" placeholder="Sélectionner votre pays"
+                resetFilterOnHide variant="filled" virtualScroll virtualScrollItemSize="38">
+        <ng-template #selectedItem let-selectedOption>
+          <div class="tw-flex tw-items-center tw-gap-2 tw-w-20">
+            <!--suppress AngularNgOptimizedImage -->
+            <img [alt]="selectedOption.value" class="flag flag-{{selectedOption.value?.toLowerCase()}} tw-w-6"
+                 src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+            <span class="tw-text-sm">{{ selectedOption.label }}</span>
+          </div>
+        </ng-template>
+        <ng-template #item let-country>
+          <div class="tw-flex tw-items-center tw-gap-2">
+            <!--suppress AngularNgOptimizedImage -->
+            <img [alt]="country.value" class="flag flag-{{country.value?.toLowerCase()}} tw-w-6"
+                 src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+            <span class="tw-text-sm tw-truncate">{{ country.label }}</span>
+          </div>
+        </ng-template>
+      </p-select>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(address.countryCode) && address.countryCode.errors) {
+          <small class="tw-invalid">Veuillez saisir votre pays.</small>
+        }
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container [formGroup]="contactForm.controls.phone">
+    <div class="tw-relative tw-grid tw-grid-cols-1 tw-gap-y-1">
+      <p-inputgroup class="tw-w-full" tabindex="-1">
+        <p-inputgroup-addon class="tw-p-0">
+          <p-select [formControl]="selectedCountry" [options]="dialCodes" checkmark
+                    class="full-overlay no-dropdown tw-border-0 tw-h-full tw-items-center"
+                    filter filterBy="name" tabindex="-1" virtualScroll virtualScrollItemSize="38">
+            <ng-template #selectedItem let-selectedOption>
+              <div class="tw-flex tw-items-center tw-gap-2 tw-w-20">
+                <i class="pi pi-phone"></i>
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="selectedOption.code" [class]="'flag flag-' + selectedCountry.value.code.toLowerCase()"
+                     class="!tw-w-6" src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm">{{ selectedCountry.value.dial_code }}</span>
+              </div>
+            </ng-template>
+            <ng-template #item let-country>
+              <div class="tw-flex tw-items-center tw-gap-2">
+                <!--suppress AngularNgOptimizedImage -->
+                <img [alt]="country.code" [class]="'flag flag-' + country.code.toLowerCase()"
+                     class="!tw-w-6" src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"/>
+                <span class="tw-text-sm tw-truncate">{{ country.dial_code }} {{ country.name }}</span>
+              </div>
+            </ng-template>
+          </p-select>
+        </p-inputgroup-addon>
+        <p-floatlabel variant="on">
+          <input autocomplete="off" formControlName="number" id="phone" name="phoneNumber" pInputText
+                 placeholder="Numéro téléphone" size="small"/>
+        </p-floatlabel>
+      </p-inputgroup>
+      <div class="tw-relative tw-w-full tw-h-0">
+        @if (isControlTouched(phone.number)) {
+          @if (phone.number.hasError('required')) {
+            <small class="tw-invalid">Veuillez saisir votre numéro de téléphone.</small>
+          } @else if (phone.number.hasError('validPhone')) {
+            <small class="tw-invalid">Ce numéro de téléphone n'est pas valide pour le pays sélectionné.</small>
+          }
+        }
+      </div>
+    </div>
+  </ng-container>
+</form>
