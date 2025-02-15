@@ -30,7 +30,7 @@ jobs:
         cache-dependency-path: package-lock.json
     - run: npm ci
     - run: npm run build
-    - run: mv ${{ github.workspace }}/dist/browser ${{ github.workspace }}/dist
+    - run: mv ${{ github.workspace }}/dist/browser/* ${{ github.workspace }}/dist
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
