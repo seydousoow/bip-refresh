@@ -28,7 +28,7 @@ jobs:
     - run: npm ci
     - run: npm run build-pages
     - run: mv ${{ github.workspace }}/docs/browser/* ${{ github.workspace }}/docs
-    - run: ${{ github.workspace }}/docs/index.html ${{ github.workspace }}/docs/404.html
+    - run: cp ${{ github.workspace }}/docs/index.html ${{ github.workspace }}/docs/404.html
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
